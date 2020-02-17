@@ -1,0 +1,438 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>AMApplicationBuild</key>
+	<string>492</string>
+	<key>AMApplicationVersion</key>
+	<string>2.10</string>
+	<key>AMDocumentVersion</key>
+	<string>2</string>
+	<key>actions</key>
+	<array>
+		<dict>
+			<key>action</key>
+			<dict>
+				<key>AMAccepts</key>
+				<dict>
+					<key>Container</key>
+					<string>List</string>
+					<key>Optional</key>
+					<true/>
+					<key>Types</key>
+					<array>
+						<string>com.apple.cocoa.string</string>
+					</array>
+				</dict>
+				<key>AMActionVersion</key>
+				<string>2.0.3</string>
+				<key>AMApplication</key>
+				<array>
+					<string>Automator</string>
+				</array>
+				<key>AMParameterProperties</key>
+				<dict>
+					<key>COMMAND_STRING</key>
+					<dict/>
+					<key>CheckedForUserDefaultShell</key>
+					<dict/>
+					<key>inputMethod</key>
+					<dict/>
+					<key>shell</key>
+					<dict/>
+					<key>source</key>
+					<dict/>
+				</dict>
+				<key>AMProvides</key>
+				<dict>
+					<key>Container</key>
+					<string>List</string>
+					<key>Types</key>
+					<array>
+						<string>com.apple.cocoa.string</string>
+					</array>
+				</dict>
+				<key>ActionBundlePath</key>
+				<string>/System/Library/Automator/Run Shell Script.action</string>
+				<key>ActionName</key>
+				<string>Run Shell Script</string>
+				<key>ActionParameters</key>
+				<dict>
+					<key>COMMAND_STRING</key>
+					<string>#Import File
+Input_File=$(/usr/local/bin/zenity --file-selection --title "Select a File") #IncludePath
+if [ $? = "1" ]; then #Cancel
+	exit
+fi
+if [ $? = "0" ]; then #OK
+	File=${Input_File##*/} #DeletePath
+	#HomeDirectryPath
+	PHD=$(cd $(dirname $0) &amp;&amp; pwd)
+
+	#Select Convert Type
+	Convert_Type=$(/usr/local/bin/zenity --list --width 300 --height 350 --title "Select Convert" --column "No" --column "Input Format" --column "Output Format" 1 FLV MP4 2 MP4 AVI 3 MOV MP4 4 FLV M4A\(AAC\) 5 FLV M4A\(ALAC\) 6 FLV MP3 7 MP4 M4A\(AAC\) 8 MP4 MP3 9 FLAC M4A\(AAC\) 10 FLAC M4A\(ALAC\) 11 FLAC MP3 12 M4A MP3)
+
+	if [ $Convert_Type ]; then
+		
+		#Convert&amp;Output
+		if [ $Convert_Type = 1 ]; then    #FLV to MP4
+			Data=${File:0:-3}mp3
+			cd ${PHD}/Donwloads
+			Tmp=$(ls | grep $Data)
+			if [ $Data = $Tmp ]; then #SameFileExists?
+				Bool=$(/usr/local/bin/zenity --question --width 250 --title "Caution!!" --text "Already Same File Exists \n OverWrite?")
+				if [ $? = "1" ]; then #Cancel
+					exit
+				fi
+				if [ $? = "0" ]; then #OverWrite
+					rm ${PHD}/Downloads/${File:0:-4}mp3 #DeleteFormerFile
+					/usr/local/bin/ffmpeg -y -i $Input_File -vcodec copy -acodec copy ${PHD}/Downloads/${File:0:-3}mp4
+					/usr/local/bin/zenity --info --width 200 --title "Complete!!" --text "$File Converted to MP4"
+				fi
+			else
+				/usr/local/bin/ffmpeg -y -i $Input_File -vcodec copy -acodec copy ${PHD}/Downloads/${File:0:-3}mp4
+				/usr/local/bin/zenity --info --width 200 --title "Complete!!" --text "$File Converted to MP4"
+			fi
+
+		elif [ $Convert_Type = 2 ]; then    #MP4 to AVI
+			Data=${File:0:-3}mp3
+			cd ${PHD}/Donwloads
+			Tmp=$(ls | grep $Data)
+			if [ $Data = $Tmp ]; then #SameFileExists?
+				Bool=$(/usr/local/bin/zenity --question --width 250 --title "Caution!!" --text "Already Same File Exists \n OverWrite?")
+				if [ $? = "1" ]; then #Cancel
+					exit
+				fi
+				if [ $? = "0" ]; then #OverWrite
+					rm ${PHD}/Downloads/${File:0:-4}mp3 #DeleteFormerFile
+					/usr/local/bin/ffmpeg -i $Input_File ${PHD}/Downloads/${Song:0:-3}avi
+					/usr/local/bin/zenity --info --width 200 --title "Complete!!" --text "$File Converted to AVI"
+				fi
+			else
+				/usr/local/bin/ffmpeg -i $Input_File ${PHD}/Downloads/${Song:0:-3}avi
+				/usr/local/bin/zenity --info --width 200 --title "Complete!!" --text "$File Converted to AVI"
+			fi
+			
+		elif [ "$Convert_Type" = '3' ]; then    #MOV to MP4
+			Data=${File:0:-3}mp3
+			cd ${PHD}/Donwloads
+			Tmp=$(ls | grep $Data)
+			if [ $Data = $Tmp ]; then #SameFileExists?
+				Bool=$(/usr/local/bin/zenity --question --width 250 --title "Caution!!" --text "Already Same File Exists \n OverWrite?")
+				if [ $? = "1" ]; then #Cancel
+					exit
+				fi
+				if [ $? = "0" ]; then #OverWrite
+					rm ${PHD}/Downloads/${File:0:-4}mp3 #DeleteFormerFile
+					/usr/local/bin/ffmpeg -i $Input_File -pix_fmt yuv420p ${PHD}/Downloads/${File:0:-3}mp4
+					/usr/local/bin/zenity --info --width 200 --title "Complete!!" --text "$File Converted to MP4"
+				fi
+			else
+				/usr/local/bin/ffmpeg -i $Input_File -pix_fmt yuv420p ${PHD}/Downloads/${File:0:-3}mp4
+				/usr/local/bin/zenity --info --width 200 --title "Complete!!" --text "$File Converted to MP4"
+			fi			
+
+		elif [ "$Convert_Type" = '4' ]; then    #FLV to M4A\(AAC\)
+			Data=${File:0:-3}mp3
+			cd ${PHD}/Donwloads
+			Tmp=$(ls | grep $Data)
+			if [ $Data = $Tmp ]; then #SameFileExists?
+				Bool=$(/usr/local/bin/zenity --question --width 250 --title "Caution!!" --text "Already Same File Exists \n OverWrite?")
+				if [ $? = "1" ]; then #Cancel
+					exit
+				fi
+				if [ $? = "0" ]; then #OverWrite
+					rm ${PHD}/Downloads/${File:0:-4}mp3 #DeleteFormerFile
+					/usr/local/bin/ffmpeg -i $Input_File -vn -acodec copy ${PHD}/Downloads/${File:0:-3}m4a
+					/usr/local/bin/zenity --info --width 200 --title "Complete!!" --text "$File Converted to M4A\(AAC\)"
+				fi
+			else
+				/usr/local/bin/ffmpeg -i $Input_File -vn -acodec copy ${PHD}/Downloads/${File:0:-3}m4a
+				/usr/local/bin/zenity --info --width 200 --title "Complete!!" --text "$File Converted to M4A\(AAC\)"
+			fi
+			
+		elif [ "$Convert_Type" = '5' ]; then    #FLV to M4A\(ALAC\)
+			Data=${File:0:-3}mp3
+			cd ${PHD}/Donwloads
+			Tmp=$(ls | grep $Data)
+			if [ $Data = $Tmp ]; then #SameFileExists?
+				Bool=$(/usr/local/bin/zenity --question --width 250 --title "Caution!!" --text "Already Same File Exists \n OverWrite?")
+				if [ $? = "1" ]; then #Cancel
+					exit
+				fi
+				if [ $? = "0" ]; then #OverWrite
+					rm ${PHD}/Downloads/${File:0:-4}mp3 #DeleteFormerFile
+					/usr/local/bin/ffmpeg -i $Input_File -vn -acodec alac ${PHD}/Downloads/${File:0:-3}m4a
+					/usr/local/bin/zenity --info --width 200 --title "Complete!!" --text "$File Converted to M4A\(ALAC\)"
+				fi
+			else
+				/usr/local/bin/ffmpeg -i $Input_File -vn -acodec alac ${PHD}/Downloads/${File:0:-3}m4a
+				/usr/local/bin/zenity --info --width 200 --title "Complete!!" --text "$File Converted to M4A\(ALAC\)"
+			fi
+
+		elif [ "$Convert_Type" = '6' ]; then    #FLV to MP3
+			Data=${File:0:-3}mp3
+			cd ${PHD}/Donwloads
+			Tmp=$(ls | grep $Data)
+			if [ $Data = $Tmp ]; then #SameFileExists?
+				Bool=$(/usr/local/bin/zenity --question --width 250 --title "Caution!!" --text "Already Same File Exists \n OverWrite?")
+				if [ $? = "1" ]; then #Cancel
+					exit
+				fi
+				if [ $? = "0" ]; then #OverWrite
+					rm ${PHD}/Downloads/${File:0:-4}mp3 #DeleteFormerFile
+					/usr/local/bin/ffmpeg -i $Input_File -vn -acodec copy ${PHD}/Downloads/${File:0:-3}mp3
+					/usr/local/bin/zenity --info --width 200 --title "Complete!!" --text "$File Converted to MP3"
+				fi
+			else
+				/usr/local/bin/ffmpeg -i $Input_File -vn -acodec copy ${PHD}/Downloads/${File:0:-3}mp3
+				/usr/local/bin/zenity --info --width 200 --title "Complete!!" --text "$File Converted to MP3"
+			fi
+			
+		elif [ "$Convert_Type" = '7' ]; then    #MP4 to M4A\(AAC\)
+			Data=${File:0:-3}mp3
+			cd ${PHD}/Donwloads
+			Tmp=$(ls | grep $Data)
+			if [ $Data = $Tmp ]; then #SameFileExists?
+				Bool=$(/usr/local/bin/zenity --question --width 250 --title "Caution!!" --text "Already Same File Exists \n OverWrite?")
+				if [ $? = "1" ]; then #Cancel
+					exit
+				fi
+				if [ $? = "0" ]; then #OverWrite
+					rm ${PHD}/Downloads/${File:0:-4}mp3 #DeleteFormerFile
+					/usr/local/bin/ffmpeg -i $Input_File -vn -acodec copy ${PHD}/Downloads/${File:0:-3}m4a
+					/usr/local/bin/zenity --info --width 200 --title "Complete!!" --text "$File Converted to M4A\(AAC\)"
+				fi
+			else
+				/usr/local/bin/ffmpeg -i $Input_File -vn -acodec copy ${PHD}/Downloads/${File:0:-3}m4a
+				/usr/local/bin/zenity --info --width 200 --title "Complete!!" --text "$File Converted to M4A\(AAC\)"
+			fi
+
+		elif [ "$Convert_Type" = '8' ]; then    #MP4 to MP3
+			Data=${File:0:-3}mp3
+			cd ${PHD}/Donwloads
+			Tmp=$(ls | grep $Data)
+			if [ $Data = $Tmp ]; then #SameFileExists?
+				Bool=$(/usr/local/bin/zenity --question --width 250 --title "Caution!!" --text "Already Same File Exists \n OverWrite?")
+				if [ $? = "1" ]; then #Cancel
+					exit
+				fi
+				if [ $? = "0" ]; then #OverWrite
+					rm ${PHD}/Downloads/${File:0:-4}mp3 #DeleteFormerFile
+					/usr/local/bin/ffmpeg -i $Input_File ${PHD}/Downloads/${File:0:-3}mp3
+					/usr/local/bin/zenity --info --width 200 --title "Complete!!" --text "$File Converted to MP3"
+				fi
+			else
+				/usr/local/bin/ffmpeg -i $Input_File ${PHD}/Downloads/${File:0:-3}mp3
+				/usr/local/bin/zenity --info --width 200 --title "Complete!!" --text "$File Converted to MP3"
+			fi
+		
+		elif [ "$Convert_Type" = '9' ];then    #FLAC to M4A\(AAC\)
+			Data=${File:0:-4}mp3
+			cd ${PHD}/Donwloads
+			Tmp=$(ls | grep $Data)
+			if [ $Data = $Tmp ]; then #SameFileExists?
+				Bool=$(/usr/local/bin/zenity --question --width 250 --title "Caution!!" --text "Already Same File Exists \n OverWrite?")
+				if [ $? = "1" ]; then #Cancel
+					exit
+				fi
+				if [ $? = "0" ]; then #OverWrite
+					rm ${PHD}/Downloads/${File:0:-4}mp3 #DeleteFormerFile
+					/usr/local/bin/ffmpeg -i $Input_File -acodec copy ${PHD}/Downloads/${File:0:-4}m4a
+					/usr/local/bin/zenity --info --width 200 --title "Complete!!" --text "$File Converted to M4A\(AAC\)"
+				fi
+			else
+				/usr/local/bin/ffmpeg -i $Input_File -acodec copy ${PHD}/Downloads/${File:0:-4}m4a
+				/usr/local/bin/zenity --info --width 200 --title "Complete!!" --text "$File Converted to M4A\(AAC\)"
+			fi
+
+		elif [ "$Convert_Type" = '10' ];then    #FLAC to M4A\(ALAC\)
+			Data=${File:0:-4}mp3
+			cd ${PHD}/Donwloads
+			Tmp=$(ls | grep $Data)
+			if [ $Data = $Tmp ]; then #SameFileExists?
+				Bool=$(/usr/local/bin/zenity --question --width 250 --title "Caution!!" --text "Already Same File Exists \n OverWrite?")
+				if [ $? = "1" ]; then #Cancel
+					exit
+				fi
+				if [ $? = "0" ]; then #OverWrite
+					rm ${PHD}/Downloads/${File:0:-4}mp3 #DeleteFormerFile
+					/usr/local/bin/ffmpeg -i $Input_File -acodec alac ${PHD}/Downloads/${File:0:-4}m4a
+					/usr/local/bin/zenity --info --width 200 --title "Complete!!" --text "$File Converted to M4A\(ALAC\)"
+				fi
+			else
+				/usr/local/bin/ffmpeg -i $Input_File -acodec alac ${PHD}/Downloads/${File:0:-4}m4a
+				/usr/local/bin/zenity --info --width 200 --title "Complete!!" --text "$File Converted to M4A\(ALAC\)"
+			fi
+
+		elif [ "$Convert_Type" = '11' ]; then     #FLAC to MP3
+			Data=${File:0:-4}mp3
+			cd ${PHD}/Donwloads
+			Tmp=$(ls | grep $Data)
+			if [ $Data = $Tmp ]; then #SameFileExists?
+				Bool=$(/usr/local/bin/zenity --question --width 250 --title "Caution!!" --text "Already Same File Exists \n OverWrite?")
+				if [ $? = "1" ]; then #Cancel
+					exit
+				fi
+				if [ $? = "0" ]; then #OverWrite
+					rm ${PHD}/Downloads/${File:0:-4}mp3 #DeleteFormerFile
+					/usr/local/bin/ffmpeg -i $Input_File ${PHD}/Downloads/${File:0:-4}mp3
+					/usr/local/bin/zenity --info --width 200 --title "Complete!!" --text "$File Converted to MP3"
+				fi
+			else
+				/usr/local/bin/ffmpeg -i $Input_File ${PHD}/Downloads/${File:0:-4}mp3
+				/usr/local/bin/zenity --info --width 200 --title "Complete!!" --text "$File Converted to MP3"
+			fi
+
+		elif [ "$Convert_Type" = '12' ];then    #M4A to MP3
+			Data=${File:0:-3}mp3
+			cd ${PHD}/Downloads
+			Tmp=$(ls | grep $Data)
+			if [ $Data = $Tmp ]; then #SameFileExists?
+				Bool=$(/usr/local/bin/zenity --question --width 250 --title "Caution!!" --text "Already Same File Exist \n OverWrite?")
+				if [ $? = "1" ]; then #Cancel
+					exit
+				fi
+				if [ $? = "0" ]; then #OverWrite
+					rm ${PHD}/Downloads/${File:0:-3}mp3 #DeleteFormerFile
+					/usr/local/bin/ffmpeg -i $Input_File ${PHD}/Downloads/${File:0:-3}mp3
+					/usr/local/bin/zenity --info --width 200 --title "Complete!!" --text "$File Converted to MP3"
+				fi
+			else
+				/usr/local/bin/ffmpeg -i $Input_File ${PHD}/Downloads/${File:0:-3}mp3
+				/usr/local/bin/zenity --info --width 200 --title "Complete!!" --text "$File Converted to MP3"
+			fi
+		fi
+
+	fi
+
+fi</string>
+					<key>CheckedForUserDefaultShell</key>
+					<true/>
+					<key>inputMethod</key>
+					<integer>0</integer>
+					<key>shell</key>
+					<string>/bin/zsh</string>
+					<key>source</key>
+					<string></string>
+				</dict>
+				<key>BundleIdentifier</key>
+				<string>com.apple.RunShellScript</string>
+				<key>CFBundleVersion</key>
+				<string>2.0.3</string>
+				<key>CanShowSelectedItemsWhenRun</key>
+				<false/>
+				<key>CanShowWhenRun</key>
+				<true/>
+				<key>Category</key>
+				<array>
+					<string>AMCategoryUtilities</string>
+				</array>
+				<key>Class Name</key>
+				<string>RunShellScriptAction</string>
+				<key>InputUUID</key>
+				<string>D86A454A-4504-4516-A76B-EE4D0C2691A4</string>
+				<key>Keywords</key>
+				<array>
+					<string>Shell</string>
+					<string>Script</string>
+					<string>Command</string>
+					<string>Run</string>
+					<string>Unix</string>
+				</array>
+				<key>OutputUUID</key>
+				<string>4B4B5032-148A-4F63-A258-056ACB9ED77F</string>
+				<key>UUID</key>
+				<string>C0C3BDC1-7C29-4E3B-BDE3-3425B4E1E773</string>
+				<key>UnlocalizedApplications</key>
+				<array>
+					<string>Automator</string>
+				</array>
+				<key>arguments</key>
+				<dict>
+					<key>0</key>
+					<dict>
+						<key>default value</key>
+						<integer>0</integer>
+						<key>name</key>
+						<string>inputMethod</string>
+						<key>required</key>
+						<string>0</string>
+						<key>type</key>
+						<string>0</string>
+						<key>uuid</key>
+						<string>0</string>
+					</dict>
+					<key>1</key>
+					<dict>
+						<key>default value</key>
+						<false/>
+						<key>name</key>
+						<string>CheckedForUserDefaultShell</string>
+						<key>required</key>
+						<string>0</string>
+						<key>type</key>
+						<string>0</string>
+						<key>uuid</key>
+						<string>1</string>
+					</dict>
+					<key>2</key>
+					<dict>
+						<key>default value</key>
+						<string></string>
+						<key>name</key>
+						<string>source</string>
+						<key>required</key>
+						<string>0</string>
+						<key>type</key>
+						<string>0</string>
+						<key>uuid</key>
+						<string>2</string>
+					</dict>
+					<key>3</key>
+					<dict>
+						<key>default value</key>
+						<string></string>
+						<key>name</key>
+						<string>COMMAND_STRING</string>
+						<key>required</key>
+						<string>0</string>
+						<key>type</key>
+						<string>0</string>
+						<key>uuid</key>
+						<string>3</string>
+					</dict>
+					<key>4</key>
+					<dict>
+						<key>default value</key>
+						<string>/bin/sh</string>
+						<key>name</key>
+						<string>shell</string>
+						<key>required</key>
+						<string>0</string>
+						<key>type</key>
+						<string>0</string>
+						<key>uuid</key>
+						<string>4</string>
+					</dict>
+				</dict>
+				<key>isViewVisible</key>
+				<true/>
+				<key>location</key>
+				<string>359.500000:791.000000</string>
+				<key>nibPath</key>
+				<string>/System/Library/Automator/Run Shell Script.action/Contents/Resources/Base.lproj/main.nib</string>
+			</dict>
+			<key>isViewVisible</key>
+			<true/>
+		</dict>
+	</array>
+	<key>connectors</key>
+	<dict/>
+	<key>workflowMetaData</key>
+	<dict>
+		<key>workflowTypeIdentifier</key>
+		<string>com.apple.Automator.application</string>
+	</dict>
+</dict>
+</plist>
